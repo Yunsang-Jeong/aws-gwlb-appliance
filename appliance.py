@@ -605,11 +605,11 @@ class AWSGWLBAppliance:
         s += s >> 16
         return ~s & 0xFFFF
 
-    def parse_tcp_options(self, options: bytes) -> dict[str:any]:
+    def parse_tcp_options(self, raw_data: bytes) -> dict[str:any]:
         options = {}
         pointer = 0
-        while pointer < len(options):
-            kind = options[pointer]
+        while pointer < len(raw_data):
+            kind = raw_data[pointer]
 
             if kind == 0:
                 #
@@ -623,16 +623,16 @@ class AWSGWLBAppliance:
                 pointer += 1
                 continue
             else:
-                if pointer + 1 >= len(options):
+                if pointer + 1 >= len(raw_data):
                     # Something wrong
                     break
 
-                length = options[pointer + 1]
+                length = raw_data[pointer + 1]
                 if length < 2:
                     # Something wrong
                     break
 
-                data = options[pointer + 2 : pointer + length]
+                data = raw_data[pointer + 2 : pointer + length]
 
                 if kind == 2:
                     #
